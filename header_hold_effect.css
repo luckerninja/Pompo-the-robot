@@ -1,0 +1,46 @@
+.t228__list * {
+    transition: all 200ms;
+ }
+ 
+.t228__list_item {
+    height: 21px; /* 16 px*/
+    overflow: hidden;
+    font-weight: 600;
+}
+.t-menu__link-item::after {
+    display: block;
+    transition: all 200ms;
+}
+
+.t228__list_item:nth-child(1) a::after {
+    content: 'Story';
+}
+.t228__list_item:nth-child(2) a::after{
+    content: 'Collection';
+}
+.t228__list_item:nth-child(3) a::after {
+    content: 'Roadmap';
+}
+.t228__list_item:nth-child(4) a::after {
+    content: 'Plans';
+}
+.t228__list_item:nth-child(5) a::after {
+    content: 'About';
+}
+.t-menu__link-item {
+    display: block;
+}
+
+.t228__list_item:hover .t-menu__link-item {
+    transform: translate(0px, -20px);
+}
+
+
+@media screen and (max-width: 980px) {
+    .t228__list_item a:after {
+        content: ''!important;
+    }
+    .t228__list_item:hover .t-menu__link-item {
+        transform: none;
+    }
+}
