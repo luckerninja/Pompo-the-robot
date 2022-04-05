@@ -63,7 +63,7 @@ const login_whitelist = async (discord, wallet_sub, message) => {
         console.log(e);
 
         message.reply(`
-        Зайдите на сервер прежде чем залогиниться:
+        Log into the server before logging in. POM-POM:
         https://discord.gg/wYQsHB2cuR
         `)
 
@@ -71,7 +71,7 @@ const login_whitelist = async (discord, wallet_sub, message) => {
      }
 
     const conn = await DB_connect();
-    const query = "SELECT * FROM `whitelist` WHERE `discord`= '" + discord + "'";
+    const query = "SELECT * FROM `whitelist` WHERE `discord`= '" + discord.toLowerCase() + "'";
 
     result = await conn.execute(query);
     
@@ -87,29 +87,29 @@ const login_whitelist = async (discord, wallet_sub, message) => {
 
     if (result[0].length != 0) {
 
-        if(wallet_sub !== result[0][0]['wallet_metamask'].substring(0, 4)) {
-            message.reply('Дискорд или кошелек не совпадают');
+        if(wallet_sub.toLowerCase() !== result[0][0]['wallet_metamask'].substring(0, 4).toLowerCase()) {
+            message.reply('POMPO apologizes, but discord name or wallet don`t match. POM-POM');
         }       
         else {
             
             if(result[0][0]['discord_role'] === 0) {
-                message.reply('Щас дам роль');
+                message.reply('POMPO glad to see you, dear whitelisted! One second, I will give you a role. POM-POM');
                 const role = guild.roles.cache.find(role => role.name === 'Whitelist member');
                 guild_member.roles.add(role);
 
                 const conn = await DB_connect();
-                const query = "UPDATE `whitelist` SET discord_role=1 WHERE `discord`= '" + discord + "'";
+                const query = "UPDATE `whitelist` SET discord_role=1 WHERE `discord`= '" + discord.toLowerCase() + "'";
 
                 await conn.execute(query);
 
                 conn.end()
 
             } else {
-                message.reply('Этот пользователь уже залогинен на сервере');
+                message.reply('POMPO warns: this user is already logged in to the server! POM-POM');
             }
         }
     } else {
-        message.reply('Дискорд или кошелек не совпадают');
+        message.reply('POMPO apologizes, but discord name or wallet don`t match. POM-POM');
     }
 
     return result;
@@ -127,11 +127,16 @@ bot.on("messageCreate", message => {
 
     switch (args[0]) {
         case "commands":
-            message.reply(`all commands:
-            !check_whitelist - проверить есть ли вы в whitelist. введите команду в формате !check_whitelist [дискорд который вы указали]
-            !login - залогинтесь на сервер по данным из whitelist и получите роль на сервере! !login [дискорд который вы указали] [первые четыре символа привязанного кошелька]
-
-            (Квадратные скобки ставить не нужно)
+            message.reply(`
+            Hello! 
+            I am POMPO the robot AI. My functionality is pretty limited now on this server, but my owner and creator Leo are always working on my additional functionality. So soon I could be more intelligent, versatile and multifunctional as my real-life prototypes. Below you can check my main commands at this time. POM-POM.
+            All POMPO available commands:
+            /commands – show all POMPO available commands     
+            /check_whitelist - check if you are in the whitelist. enter the command in the format 
+            /check_whitelist
+            /login - log to the server according the data you share in the whitelist form and get a role on the server! 
+            /login [the first four characters of the linked wallet]*
+                        * Square brackets are not required.
             `)
             break;
         case "check_whitelist":
@@ -140,14 +145,15 @@ bot.on("messageCreate", message => {
             
         const discord_command = async () => {
 
-            let arr = await discord_check(args[1]);
+            let arr = await discord_check(message.author.tag);
 
             if (arr[0].length != 0) {
-                message.reply(`Вы были успешно добавлены в whitelist
-                Ваш кошелек: XXXXXXXXXXXXXXXXX${arr[0][0]['wallet_metamask'].slice(-4)}
+                message.reply(`POMPO have the good news: you have been successfully added to whitelist!
+                Your wallet: XXXXXXXXXXXXXXXXX${arr[0][0]['wallet_metamask'].slice(-4)}
+                POM-POM
                 `);
             }   else {
-                message.reply('УПС, мы ничего не нашли');
+                message.reply('Oops, POMPO didn`t find anything. POM-POM');
             }
         } 
 
@@ -159,7 +165,11 @@ bot.on("messageCreate", message => {
         case "login":
 
         const whitelist_catch = async () => {
-            await login_whitelist(args[1], args[2], message)
+            try {
+            await login_whitelist(message.author.tag, args[1], message)
+            } catch(e) {
+                console.log(e);
+            }
         }
 
         whitelist_catch();
@@ -168,7 +178,3 @@ bot.on("messageCreate", message => {
     }
 
 })
-
-
-
-
